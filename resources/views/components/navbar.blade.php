@@ -14,7 +14,7 @@
                 Tambah User
             </a>
 
-            <a href="/profile" class="btn btn-light">
+            <a href="/user/profile" class="btn btn-light">
                 Profil
             </a>
         </div>
