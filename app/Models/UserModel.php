@@ -4,13 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class UserModel extends Model
 {
     use HasFactory;
 
     protected $table = 'user';
-    protected $guarded = ['id'];
+
+    protected $guarded = ['id', 'uuid'];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($user) {
+            if (empty($user->uuid)) {
+                $user->uuid = (string) Str::uuid();
+            }
+        });
+    }
 
     public function kelas()
     {
@@ -20,7 +31,7 @@ class UserModel extends Model
     public function getUser()
     {
         return $this->join('kelas', 'user.kelas_id', '=', 'kelas.id')
-                    ->select('user.*', 'kelas.nama_kelas as nama_kelas')
-                    ->get();
+            ->select('user.*', 'kelas.nama_kelas as nama_kelas')
+            ->get();
     }
 }
