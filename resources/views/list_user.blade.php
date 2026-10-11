@@ -76,6 +76,24 @@
         Data mahasiswa yang terdaftar
     </p>
 
+    
+@if (session('success'))
+    <div class="alert alert-success mx-auto mb-4" style="max-width: 900px;">
+        ✨ {{ session('success') }}
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger mx-auto mb-4" style="max-width: 900px;">
+        <strong>Oops! Ada kesalahan.</strong>
+        <ul class="mb-0 mt-2">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
     <div class="pixel-card">
 
        <div class="d-flex justify-content-end mb-4">

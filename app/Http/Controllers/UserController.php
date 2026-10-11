@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Kelas;
 use App\Models\UserModel;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -31,24 +30,68 @@ class UserController extends Controller
     {
         $kelas = $this->kelasModel->getKelas();
 
-        $data = [
+        return view('create_user', [
             'title' => 'Create User',
             'kelas' => $kelas
-        ];
-
-        return view('create_user', $data);
+        ]);
     }
 
     public function store(Request $request)
     {
-        $data = [
-            'nama' => $request->nama,
-            'npm' => $request->npm,
-            'kelas_id' => $request->kelas_id
-        ];
+        $data = $request->validate([
+            'nama' => 'required|string|max:255',
+            'npm' => 'required|string|max:255',
+            'kelas_id' => 'required'
+        ]);
 
         $this->userModel->create($data);
 
-        return redirect()->to('/user');
+        return redirect('/user')
+            ->with('success', 'User berhasil ditambahkan!');
+    }
+
+    public function edit(string $uuid)
+    {
+        $user = $this->userModel->newQuery()
+            ->where('uuid', $uuid)
+            ->firstOrFail();
+
+        $kelas = $this->kelasModel->getKelas();
+
+        return view('edit_user', [
+            'title' => 'Edit User',
+            'user' => $user,
+            'kelas' => $kelas
+        ]);
+    }
+
+    public function update(Request $request, string $uuid)
+    {
+        $data = $request->validate([
+            'nama' => 'required|string|max:255',
+            'npm' => 'required|string|max:255',
+            'kelas_id' => 'required'
+        ]);
+
+        $user = $this->userModel->newQuery()
+            ->where('uuid', $uuid)
+            ->firstOrFail();
+
+        $user->update($data);
+
+        return redirect('/user')
+            ->with('success', 'User berhasil diperbarui!');
+    }
+
+    public function destroy(string $uuid)
+    {
+        $user = $this->userModel->newQuery()
+            ->where('uuid', $uuid)
+            ->firstOrFail();
+
+        $user->delete();
+
+        return redirect('/user')
+            ->with('success', 'User berhasil dihapus!');
     }
 }
